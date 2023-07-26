@@ -32,18 +32,37 @@ const userSchema = new mongoose.Schema({
     } ,
     photo : {
         type : String ,
-    }
+    } ,
+    passwordChangedAt : Date ,
+    passwordResetToken : String ,
+    passwordResetTokenExpiresAt : String
 })
 
 
 userSchema.pre('save' , async function(next) {
     if(!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password , 10);
+    this.confirmPassword  = undefined;
+    next();
+});
+
+userSchema.pre('save' , function(next) {
+    if(!this.isModified('password') || this.isNew)  return next();
+    this.passwordChangedAt = Date.now();
     next();
 })
 
+
 userSchema.methods.hasEnteredCorrectPassword = async function(candidatePassword , password) {
     return await bcrypt.compare(candidatePassword , password);
+}
+
+userSchema.methods.hasChangedPasswordRecently = function(jwtIssue) {
+    if(this.passwordChangedAt) {
+        const passwordChangedAtMS = parseInt(this.passwordChangedAt.getTime() /1000 , 10) ;
+        return jwtIssue < passwordChangedAtMS;
+    }
+    return false;
 }
 
 const User = mongoose.model('User' , userSchema);
