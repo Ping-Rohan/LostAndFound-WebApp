@@ -1,5 +1,5 @@
 const Lost = require("../model/lostItemModel");
-const catchAsync = require("../utils/catchAsync");
+const catchAsync = require("../utils/CatchAsync");
 const validateFields = require("../utils/validateFields");
 const excludeObj = require("../utils/excludeFields");
 

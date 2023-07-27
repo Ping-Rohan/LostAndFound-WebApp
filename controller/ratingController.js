@@ -1,5 +1,5 @@
 const Rating = require('../model/userRating');
-const catchAsync = require('../utils/catchAsync');
+const catchAsync = require('../utils/CatchAsync');
 
 exports.postRating = catchAsync(async(request , response , next) => {
     request.body.targetUser = request.params.targetUser;

@@ -1,5 +1,5 @@
 const Comment  = require('../model/commentModel');
-const catchAsync = require("../utils/catchAsync");
+const catchAsync = require("../utils/CatchAsync");
 
 exports.createComment = catchAsync(async(request , response , next) => {
     request.body.lostItem = request.params.lostItemId;
