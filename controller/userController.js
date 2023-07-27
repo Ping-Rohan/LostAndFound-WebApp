@@ -54,3 +54,10 @@ exports.updateUser = catchAsync(async(request , response , next) => {
     user : docAfterUpdate
   })
 })
+
+exports.getMe = catchAsync(async(request , response , next) => {
+  const userDoc = await User.findById(request._user._id);
+  response.status(200).json({
+    user : userDoc
+  })
+})
