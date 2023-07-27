@@ -1,9 +1,11 @@
 const Router = require('express').Router();
 const userController = require('../controller/userController');
-const {protectRoutes , updatePassword} = require('../controller/authController')
+const {protectRoutes , updatePassword , forgotPassword , resetPassword} = require('../controller/authController')
 
 Router.post('/signup' , userController.signUp);
 Router.post('/login' , userController.login);
+Router.post('/forgot-password' , forgotPassword);
+Router.post('/reset-password/:token' , resetPassword)
 
 Router.use(protectRoutes);
 

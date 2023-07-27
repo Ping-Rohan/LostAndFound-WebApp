@@ -1,8 +1,8 @@
-const res = require("express/lib/response");
 const User = require("../model/userModel");
 const AppError = require("../utils/AppError");
 const CatchAsync = require("../utils/CatchAsync");
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 exports.protectRoutes = CatchAsync(async(request , response , next) => {
     let token;
@@ -44,4 +44,42 @@ exports.updatePassword = CatchAsync(async (request , response , next) => {
         message : 'Password updated successfully'
     })
 
+})
+
+exports.forgotPassword = CatchAsync(async(request , response , next) => {
+    const {email} = request.body;
+
+    const userDoc = await User.findOne({email});
+
+    if(!userDoc) return next(new AppError("Invalid email address provided"));
+
+    const token = userDoc.generatePasswordToken();
+    // validate because token is stored first time not updated
+    await userDoc.save({validateBeforeSave : false});
+
+    response.status(200).json({
+        message : "Reset token sent to your email" ,
+        token ,
+    })
+
+})
+
+exports.resetPassword = CatchAsync(async(request , response , next) => {
+    const token  = request.params.token;
+    if(!token) return next(new AppError("Please provide reset token"));
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const userDoc = await User.findOne({passwordResetToken : hashedToken , passwordResetTokenExpiresAt : {$gt : Date.now()} });
+
+    if(!userDoc) return next(new AppError('Invalid token or token has been expired'));
+
+    userDoc.password = request.body.password;
+    userDoc.confirmPassword = request.body.confirmPassword;
+    userDoc.passwordResetToken = undefined;
+    userDoc.passwordResetTokenExpiresAt = undefined;
+    await userDoc.save();
+
+    response.status(200).json({
+        message : "Password successfully updated" ,
+    })
 })
