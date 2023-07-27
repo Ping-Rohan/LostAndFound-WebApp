@@ -84,3 +84,10 @@ exports.resetPassword = catchAsync(async(request , response , next) => {
         message : "Password successfully updated" ,
     })
 })
+
+exports.logout = catchAsync(async(request , response , next) => {
+    response.clearCookie('refreshToken');
+    response.status(200).json({
+        message : "Logged out successfully"
+    })
+})

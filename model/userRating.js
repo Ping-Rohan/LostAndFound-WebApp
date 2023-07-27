@@ -37,7 +37,7 @@ reviewSchema.statics.calculateAverageStars = async function(userId) {
         await User.findByIdAndUpdate(userId , {averageRating : 0});
         return;
     }
-    
+
     await User.findByIdAndUpdate(userId , {averageRating : stats[0].averageRating});
 }
 
