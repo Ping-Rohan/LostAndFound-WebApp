@@ -15,7 +15,11 @@ const userSchema = new mongoose.Schema({
         validate : [validator.isEmail , "Please provide a valid email"] ,
         lowercase : true
     } ,
-    password : {
+    averageRating : {
+        type : Number ,
+        default : 0
+    } ,
+        password : {
         type : String , 
         required : [true , "Please provide a password"] ,
         minLength : 8 ,

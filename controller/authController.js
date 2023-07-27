@@ -1,10 +1,11 @@
 const User = require("../model/userModel");
 const AppError = require("../utils/AppError");
-const CatchAsync = require("../utils/CatchAsync");
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const catchAsync = require("../utils/CatchAsync");
 
-exports.protectRoutes = CatchAsync(async(request , response , next) => {
+
+exports.protectRoutes = catchAsync(async(request , response , next) => {
     let token;
     if(request.headers.authorization && request.headers.authorization.startsWith('Bearer')) {
         token = request.headers.authorization.split(" ")[1];
@@ -27,7 +28,7 @@ exports.protectRoutes = CatchAsync(async(request , response , next) => {
 
 })
 
-exports.updatePassword = CatchAsync(async (request , response , next) => {
+exports.updatePassword = catchAsync(async (request , response , next) => {
     const {currentPassword , newPassword , confirmPassword} = request.body;
 
     if(!currentPassword || !newPassword) return next(new AppError("Please enter current and new password both" , 400));
@@ -46,7 +47,7 @@ exports.updatePassword = CatchAsync(async (request , response , next) => {
 
 })
 
-exports.forgotPassword = CatchAsync(async(request , response , next) => {
+exports.forgotPassword = catchAsync(async(request , response , next) => {
     const {email} = request.body;
 
     const userDoc = await User.findOne({email});
@@ -64,7 +65,7 @@ exports.forgotPassword = CatchAsync(async(request , response , next) => {
 
 })
 
-exports.resetPassword = CatchAsync(async(request , response , next) => {
+exports.resetPassword = catchAsync(async(request , response , next) => {
     const token  = request.params.token;
     if(!token) return next(new AppError("Please provide reset token"));
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');

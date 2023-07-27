@@ -11,11 +11,16 @@ exports.signUp = catchAsync(async (request, response , next) => {
   const accessToken = signAccessToken(user._id);
   const refreshToken = signRefreshToken(user._id);
 
+  response.cookie('refreshToken' , refreshToken , {
+    httpOnly : true ,
+    secure : true ,
+    expires : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  })
+
   response.status(200).json({
     message: "Account created successfully",
     user,
     accessToken,
-    refreshToken,
   });
 });
 
@@ -31,10 +36,15 @@ exports.login = catchAsync(async(request , response , next) => {
     const accessToken = signAccessToken(userDocument._id);
     const refreshToken = signRefreshToken(userDocument._id);
 
+    response.cookie('refreshToken' , refreshToken , {
+      httpOnly : true ,
+      secure : true ,
+      expires : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    })
+
     response.status(200).json({
         message : "Logged in successfully" ,
         accessToken ,
-        refreshToken
     })
 
 })

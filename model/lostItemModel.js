@@ -42,6 +42,20 @@ const lostSchema = new mongoose.Schema({
         required : [true , "Lost item must have return reward"] ,
         default : 10
     }
+} , {
+    toJSON : {virtuals : true} ,
+    toObject : {virtuals : true}
+})
+
+lostSchema.virtual("comments" , {
+    foreignField : "lostItem" ,
+    localField : "_id" ,
+    ref : "Comment"
+})
+
+lostSchema.pre(/^find/ , function(next) {
+    this.populate("comments");
+    next();
 })
 
 const Lost = mongoose.model("Lost" , lostSchema);
